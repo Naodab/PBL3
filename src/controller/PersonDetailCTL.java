@@ -11,12 +11,13 @@ import java.time.LocalDate;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import dao.BoardingClassDAO;
 import dao.GlobalDAO;
 import dao.ParentsDAO;
 import dao.StudentDAO;
 import dao.TeacherDAO;
 import dao.UserDAO;
-
+import model.BoardingClass;
 import model.Parents;
 import model.Student;
 import model.Teacher;
@@ -162,5 +163,9 @@ public class PersonDetailCTL implements ActionListener {
 		} else if (src.equals("Chi tiết")) {
 			new AbsenceDetail(Integer.parseInt(this.personDetail.getId()));
 		}
+	}
+
+	public BoardingClass getBoardingClassByID(int boardingClass_id) {
+		return BoardingClassDAO.getInstance().selectById(boardingClass_id);
 	}
 }

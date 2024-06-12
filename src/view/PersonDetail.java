@@ -376,7 +376,7 @@ public class PersonDetail extends JFrame {
 
 		cbClassID = new JComboBox<CBBItem>();
 		cbClassID.addItem(new CBBItem(0, "Không có"));
-		for (CBBItem cbb : BoardingClass.getBoardingClass_idAndName()) {
+		for (CBBItem cbb : BoardingClass.getIdAndNameVacancy()) {
 			if (cbb.getValue() != 0)
 				cbClassID.addItem(cbb);
 		}
@@ -660,6 +660,13 @@ public class PersonDetail extends JFrame {
 			if (cbb.getValue() != 0)
 				cbClassID.addItem(cbb);
 		}
+		if (teacher != null) {
+			System.out.println("1");
+			if (teacher.getBoardingClass_id() != 0) {
+				BoardingClass bdc = dtpc.getBoardingClassByID(teacher.getBoardingClass_id());
+				cbClassID.addItem(new CBBItem(bdc.getBoardingClass_id(), bdc.getName()));
+			}
+		}
 		cbClassID.setFont(TEXT_FONT);
 		cbClassID.setLocation(lblClass.getX() + lblClass.getWidth() + GAP_WIDTH, lblClass.getY());
 		cbClassID.setSize(panelUnder.getWidth() - PADDING - cbClassID.getX(), HEIGHT_TEXT);
@@ -803,7 +810,7 @@ public class PersonDetail extends JFrame {
 	}
 
 	public static boolean checkDate(int day, int month, int year) {
-		if (((year < 1) || (month < 1) || (month > 12) || (day < 1)))
+		if (((year < 1) || (month < 1) || (month > 12) || (day < 1) || (year > LocalDate.now().getYear())))
 			return false;
 		int[] dayOfMonth = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 		if (year % 4 == 0)

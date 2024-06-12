@@ -1887,7 +1887,6 @@ public class AdminScreen extends JFrame {
 		btnSaveEHis.setBorderColor(Color.BLACK);
 		btnSaveEHis.addActionListener(adminController);
 		btnSaveEHis.setBounds(593, 667, 192, 30);
-//		childPanel.add(btnSaveEHis);
 
 		btnCancelEHis = new MyButton();
 		btnCancelEHis.setText("Phân thực đơn");

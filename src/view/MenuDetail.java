@@ -53,6 +53,7 @@ public class MenuDetail extends JDialog {
 	
 	public MenuDetail() {
 		mectl = new MenuDetailCTL(this);
+		menu = null;
 		this.isNew = true;
 		this.isEditable = true;
 		initComponents();

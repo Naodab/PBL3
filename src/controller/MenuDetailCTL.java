@@ -32,7 +32,7 @@ public class MenuDetailCTL implements ActionListener{
 	}
 	
 	public int selectNewIdFood() {
-		return GlobalDAO.getInstance().getAuto_IncrementOf("food");
+		return GlobalDAO.getInstance().getAuto_IncrementOf("menu");
 	}
 	
 	public Menu selectMenuById(int menu_id) {
@@ -51,13 +51,15 @@ public class MenuDetailCTL implements ActionListener{
 			int returnal = JOptionPane.showConfirmDialog(this.me, str);
 			if (returnal == JOptionPane.YES_OPTION) {
 				Menu menu = this.me.getMenu();
+				System.out.println(menu.getMenu_id());
 				if (this.me.getIsNew()) {
 					MenuDAO.getInstance().insert(menu);
 				} else {
 					if (!this.me.isEditableActive()) {
 						MenuDAO.getInstance().update(menu);
-					} else
-						MenuDAO.getInstance().updateActive(menu.getMenu_id(), me.isActive());
+					} else {
+						MenuDAO.getInstance().updateActive(menu.getMenu_id(), menu.isActive());
+					}
 				}
 				JOptionPane.showMessageDialog(me, "Lưu thành công! Nhấn \"Xem thêm\" để làm mới dữ liệu!");
 				this.me.dispose();

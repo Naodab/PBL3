@@ -98,4 +98,15 @@ public class BoardingClass {
 		}
 		return result;
 	}
+	
+	public static List<CBBItem> getIdAndNameVacancy() {
+		List<CBBItem> result = new ArrayList<CBBItem>();
+		List<BoardingClass> allBc = BoardingClassDAO.getInstance().selectAll();
+		for (BoardingClass bc : allBc) {
+			if (bc.getNumberOfBed() > bc.getStudent_ids().size()) {
+				result.add(new CBBItem(bc.getBoardingClass_id(), bc.getName()));
+			}
+		}
+		return result;
+	}
 }

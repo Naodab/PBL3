@@ -22,6 +22,28 @@ public class AbsenceDAO implements DAOInterface<Absence> {
 			_Instance = new AbsenceDAO();
 		return _Instance;
 	}
+	
+	public Absence checkExist(int t, Date time) {
+		Absence result = null;
+		Connection conn = JDBCUtil.getConnection();
+		try {
+			String sql = "SELECT * FROM absence WHERE student_id = ? AND absence_day = ?";
+			PreparedStatement pps = conn.prepareStatement(sql);
+			pps.setInt(1, t);
+			pps.setDate(2, time);
+			ResultSet rs = pps.executeQuery();
+			while (rs.next()) {
+				int absence_id = rs.getInt("absence_id");
+				Date absence_day = rs.getDate("absence_day");
+				int student_id = rs.getInt("student_id");
+				result = new Absence(absence_id, absence_day, student_id);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		JDBCUtil.closeConnection(conn);
+		return result;
+	}
 
 	@Override
 	public boolean insert(Absence t) {

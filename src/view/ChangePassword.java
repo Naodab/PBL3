@@ -186,7 +186,7 @@ public class ChangePassword extends JDialog {
 		boolean check = true;
 		if (txtNewPass.getText().equals("") || txtOldPass.getText().equals("") || txtNewPassAgain.getText().equals("")) {
 			check = false;
-			JOptionPane.showMessageDialog(this, "Bạn đã chưa nhập mật khẩu cũ\n"
+			JOptionPane.showMessageDialog(this, "Bạn chưa nhập mật khẩu cũ\n"
 												+ "hoặc chưa nhập mật khẩu mới\nhoặc chưa xác nhận lại mật khẩu mới!");
 		}
 		else if (!txtOldPass.getText().equals(user.getPassword())) {

@@ -172,7 +172,7 @@ public class TeacherController implements ActionListener {
 				if (result == JOptionPane.YES_OPTION) {
 					for (int i = 0; i < teacherController.dataPayment.getRowCount(); i++) {
 						if (teacherController.dataPayment.getValueAt(i, 4).toString().equals("Đã nộp")
-								&& (listCheckStatus.get(i) == 1 || listCheckStatus.get(i) == 0)) {
+								&& (listCheckStatus.get(i) == 1 || listCheckStatus.get(i) == 2)) {
 							Invoice temp = new Invoice();
 							temp.setInvoice_id(
 									Integer.parseInt(teacherController.dataPayment.getValueAt(i, 3).toString()));
@@ -182,7 +182,13 @@ public class TeacherController implements ActionListener {
 							temp.setBoardingFee_id(feeID);
 							if (teacherController.dataPayment.getValueAt(i, 4).toString().equals("Đã nộp"))
 								temp.setStatusPayment((byte) 2);
-							boolean execute = InvoiceDAO.getInstance().updateById(temp);
+							
+							boolean execute = false;
+							Invoice old = InvoiceDAO.getInstance().selectById(
+									Integer.parseInt(teacherController.dataPayment.getValueAt(i, 3).toString()));
+							if (old.getStatusPayment() != (byte) 3) {
+								execute = InvoiceDAO.getInstance().updateById(temp);
+							}
 							if (!execute)
 								JOptionPane.showMessageDialog(teacherController,
 										"Cập nhật thông tin tại dòng thứ " + i + " thất bại!");
@@ -250,8 +256,15 @@ public class TeacherController implements ActionListener {
 								if (GlobalDAO.getInstance().getSizeOf("absence", "absence_day = "
 										+ teacherController.absenceDay + " and student_id = " + studentID) == 0) {
 									Absence absence = new Absence(0, teacherController.absenceDay, studentID);
-									AbsenceDAO.getInstance().insert(absence);
+									if (AbsenceDAO.getInstance().checkExist(studentID,
+											teacherController.absenceDay) == null)
+										AbsenceDAO.getInstance().insert(absence);
 								}
+							} else if (absenceStatus == 0) {
+								Absence tmp = AbsenceDAO.getInstance().checkExist(studentID,
+										teacherController.absenceDay);
+								if (tmp != null)
+									AbsenceDAO.getInstance().delete(tmp);
 							}
 						}
 					}
@@ -266,9 +279,9 @@ public class TeacherController implements ActionListener {
 			for (int i = 0; i < teacherController.dataStudent3.getRowCount(); i++) {
 				if (teacherController.dataStudent3.getValueAt(i, 5) != null
 						&& teacherController.dataStudent3.getValueAt(i, 6) != null) {
-					Student t = new Student();
 					try {
-						t.setStudent_id(Integer.parseInt(teacherController.dataStudent3.getValueAt(i, 1) + ""));
+						Student t = StudentDAO.getInstance()
+								.selectById(Integer.parseInt(teacherController.dataStudent3.getValueAt(i, 1) + ""));
 						t.setHeight(Double.parseDouble(teacherController.dataStudent3.getValueAt(i, 5) + ""));
 						t.setWeight(Double.parseDouble(teacherController.dataStudent3.getValueAt(i, 6) + ""));
 						if (t.getHeight() < 0 || t.getWeight() < 0) {
@@ -286,15 +299,16 @@ public class TeacherController implements ActionListener {
 					}
 				} else if (teacherController.dataStudent3.getValueAt(i, 5) != null
 						&& teacherController.dataStudent3.getValueAt(i, 6) == null) { // 6 : weight
-					Student t = new Student();
 					try {
-						t.setStudent_id(Integer.parseInt(teacherController.dataStudent3.getValueAt(i, 1) + ""));
+						Student t = StudentDAO.getInstance()
+								.selectById(Integer.parseInt(teacherController.dataStudent3.getValueAt(i, 1) + ""));
 						t.setHeight(Double.parseDouble(teacherController.dataStudent3.getValueAt(i, 5) + ""));
-						t.setWeight(Double.parseDouble(teacherController.dataStudent3.getValueAt(i, 4) + ""));
 						if (t.getHeight() < 0) {
+							System.out.println("cccc");
 							JOptionPane.showMessageDialog(teacherController, "Dữ liệu chỉnh sửa chưa phù hợp");
 							check = false;
 						} else {
+							System.out.println("dddd");
 							int result = JOptionPane.showConfirmDialog(teacherController,
 									"Bạn chắc chắn muốn lưu thay đổi?", "Thông báo", JOptionPane.YES_NO_OPTION);
 							if (result == JOptionPane.YES_OPTION)
@@ -306,11 +320,10 @@ public class TeacherController implements ActionListener {
 					}
 				} else if (teacherController.dataStudent3.getValueAt(i, 5) == null
 						&& teacherController.dataStudent3.getValueAt(i, 6) != null) {
-					Student t = new Student();
 					try {
-						t.setStudent_id(Integer.parseInt(teacherController.dataStudent3.getValueAt(i, 1) + ""));
+						Student t = StudentDAO.getInstance()
+								.selectById(Integer.parseInt(teacherController.dataStudent3.getValueAt(i, 1) + ""));
 						t.setWeight(Double.parseDouble(teacherController.dataStudent3.getValueAt(i, 6) + ""));
-						t.setHeight(Double.parseDouble(teacherController.dataStudent3.getValueAt(i, 3) + ""));
 						if (t.getWeight() < 0) {
 							JOptionPane.showMessageDialog(teacherController, "Dữ liệu chỉnh sửa chưa phù hợp");
 							check = false;
@@ -324,7 +337,8 @@ public class TeacherController implements ActionListener {
 						JOptionPane.showMessageDialog(teacherController, "Dữ liệu chỉnh sửa chưa phù hợp");
 						check = false;
 					}
-				}
+				} else
+					continue;
 			}
 			if (check) {
 				JOptionPane.showMessageDialog(teacherController, "Cập nhật thành công chiều cao và cân nặng!");

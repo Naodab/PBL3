@@ -5,6 +5,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
 import java.sql.Date;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ import custom.MyTextField;
 import custom.PanelRound;
 import custom.TableActionTcCellEditor;
 import custom.TableActionTcCellRender;
+import dao.AbsenceDAO;
+import model.Absence;
 import model.BoardingClass;
 import model.BoardingFee;
 import model.CBBItem;
@@ -567,8 +570,10 @@ public class TeacherScreen extends JFrame {
 			}
 		} else if (category.equals("monitorAbsence")) {
 			for (int i = 0; i < listStudent.size(); i++) {
-				dataStudent2.addRow(
-						new Object[] { i + 1, listStudent.get(i).getStudent_id(), listStudent.get(i).getName() });
+				Absence temp = AbsenceDAO.getInstance().checkExist(listStudent.get(i).getStudent_id(), this.absenceDay);
+				int status = (temp == null) ? 0 : 1;
+				dataStudent2.addRow(new Object[] { i + 1, listStudent.get(i).getStudent_id(),
+						listStudent.get(i).getName(), status });
 			}
 		}
 	}
@@ -678,7 +683,7 @@ public class TeacherScreen extends JFrame {
 			int status = invoice.getStatusPayment();
 			String str_status = "";
 			this.listStatus.add(status);
-			if (status == 1 || status == 0)
+			if (status == 1)
 				str_status = "Chưa nộp";
 			else if (status == 2)
 				str_status = "Đã nộp";
@@ -1018,8 +1023,9 @@ public class TeacherScreen extends JFrame {
 	public void viewStudentPhysical() {
 		List<Student> listStudent = tc.getListStudentOfBoardingClass_id(teacher.getBoardingClass_id());
 		for (int i = 0; i < listStudent.size(); i++) {
+			DecimalFormat df = new DecimalFormat("#.##");
 			dataStudent3.addRow(new Object[] { i + 1, listStudent.get(i).getStudent_id(), listStudent.get(i).getName(),
-					listStudent.get(i).getHeight(), listStudent.get(i).getWeight() });
+					df.format(listStudent.get(i).getHeight()), df.format(listStudent.get(i).getWeight()) });
 		}
 	}
 
@@ -1052,9 +1058,16 @@ public class TeacherScreen extends JFrame {
 		tableStudents.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		tableStudents.setRowHeight(30);
 
-		dataStudent3 = new DefaultTableModel();
 		Object[] columns = { "STT", "Mã HS", "Họ và tên", "Chiều cao (m)", "Cân nặng (kg)", "Cập nhật chiều cao",
 				"Cập nhật cân nặng" };
+		boolean isEditable[] = { false, false, false, false, false, true, true };
+		dataStudent3 = new DefaultTableModel() {
+			private static final long serialVersionUID = 1L;
+
+			public boolean isCellEditable(int row, int column) {
+				return isEditable[column];
+			}
+		};
 		dataStudent3.setColumnIdentifiers(columns);
 
 		viewStudentPhysical();

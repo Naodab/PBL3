@@ -83,6 +83,7 @@ public class MenuDAO implements DAOInterface<Menu>{
 			PreparedStatement pps = conn.prepareStatement(sql);
 			pps.setBoolean(1, active);
 			pps.setInt(2, menu_id);
+			System.out.println(pps.toString());
 			int check = pps.executeUpdate();
 			if (check > 0) result = true;
 		} catch (SQLException e) {
@@ -140,7 +141,7 @@ public class MenuDAO implements DAOInterface<Menu>{
 	}
 
 	public Menu selectById(int t) {
-		Menu result = new Menu();
+		Menu result = null;
 		Connection conn = JDBCUtil.getConnection();
 		try {
 			String sql = "SELECT * FROM menu WHERE menu_id=?";

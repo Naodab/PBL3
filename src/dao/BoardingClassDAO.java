@@ -173,8 +173,10 @@ public class BoardingClassDAO implements DAOInterface<BoardingClass> {
 			e.printStackTrace();
 		}
 		JDBCUtil.closeConnection(conn);
-		result.setTeacher_id(TeacherDAO.getInstance().selectByBoardingClass_id(result.getBoardingClass_id()));
-		result.setStudent_ids(StudentDAO.getInstance().selectByBoardingClass_id(result.getBoardingClass_id()));
+		if (result != null) {
+			result.setTeacher_id(TeacherDAO.getInstance().selectByBoardingClass_id(result.getBoardingClass_id()));
+			result.setStudent_ids(StudentDAO.getInstance().selectByBoardingClass_id(result.getBoardingClass_id()));
+		}
 		return result;
 	}
 }

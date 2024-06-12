@@ -57,7 +57,7 @@ public class AdminController implements ActionListener {
 		this.object = "Student";
 		this.amount = 20;
 	}
-	
+
 	public void setObject(String object) {
 		this.object = object;
 	}
@@ -319,7 +319,8 @@ public class AdminController implements ActionListener {
 				} else if (condition.equals("đã in")) {
 					condition = clSearch + "=3";
 				} else {
-					JOptionPane.showMessageDialog(adminScreen, "Vui lòng nhập đúng tên trạng thái!\n 1. Chưa nộp.\n 2. Đã nộp.\n 3. Đã in");
+					JOptionPane.showMessageDialog(adminScreen,
+							"Vui lòng nhập đúng tên trạng thái!\n 1. Chưa nộp.\n 2. Chưa in.\n 3. Đã in");
 					return;
 				}
 			} else
@@ -340,7 +341,7 @@ public class AdminController implements ActionListener {
 	public void doAddMoreEHis() {
 		int bFee_id = ((CBBItem) this.adminScreen.comboBoxEHis.getSelectedItem()).getValue();
 		String condition = this.adminScreen.getTextSearchOf(object);
-		
+
 		String extraCondition = " boardingFee_id = \'" + bFee_id + "\'";
 		if (condition.length() == 0) {
 			condition = extraCondition;
@@ -639,11 +640,13 @@ public class AdminController implements ActionListener {
 				this.adminScreen.setNonEditEHis();
 				this.adminScreen.comboBoxEHis.setSelectedIndex(0);
 				this.adminScreen.comboBoxBFee.removeActionListener(this);
-				DefaultComboBoxModel<CBBItem> model = (DefaultComboBoxModel<CBBItem>) this.adminScreen.comboBoxBFee.getModel();
+				DefaultComboBoxModel<CBBItem> model = (DefaultComboBoxModel<CBBItem>) this.adminScreen.comboBoxBFee
+						.getModel();
 				model.removeElement(new CBBItem(bfd.getBoardingFee().getBoardingFee_id(), ""));
 				this.adminScreen.comboBoxBFee.addActionListener(this);
 				this.adminScreen.comboBoxEHis.removeActionListener(this);
-				DefaultComboBoxModel<CBBItem> model2 = (DefaultComboBoxModel<CBBItem>) this.adminScreen.comboBoxEHis.getModel();
+				DefaultComboBoxModel<CBBItem> model2 = (DefaultComboBoxModel<CBBItem>) this.adminScreen.comboBoxEHis
+						.getModel();
 				model2.removeElement(new CBBItem(bfd.getBoardingFee().getBoardingFee_id(), ""));
 				this.adminScreen.comboBoxEHis.addActionListener(this);
 				this.adminScreen.comboBoxBFee.revalidate();

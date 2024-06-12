@@ -28,6 +28,7 @@ public class Food_MenuDAO {
 			PreparedStatement pps = conn.prepareStatement(sql);
 			pps.setInt(1, menu_id);
 			pps.setInt(2, food_id);
+			System.out.println(pps.toString());
 			int check = pps.executeUpdate();
 			if (check > 0) result = true;
 		} catch (SQLException e) {
