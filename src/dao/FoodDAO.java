@@ -76,7 +76,7 @@ public class FoodDAO implements DAOInterface<Food> {
 			PreparedStatement pps = conn.prepareStatement(sql);
 			pps.setString(1, t.getName());
 			pps.setBoolean(2, t.getCategory());
-			pps.setInt(4, t.getFood_id());
+			pps.setInt(3, t.getFood_id());
 			int check = pps.executeUpdate();
 			if (check > 0)
 				result = true;

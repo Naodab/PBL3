@@ -1923,6 +1923,8 @@ public class AdminScreen extends JFrame {
 	}
 
 	public int getTfPrinted() {
+		if (this.tfAmount.getText().length() == 0)
+			return 0;
 		return Integer.parseInt(this.tfInvoice.getText());
 	}
 
@@ -1961,7 +1963,9 @@ public class AdminScreen extends JFrame {
 	}
 
 	public int getBoardingFeeid() {
-		int bFee_id = ((CBBItem) comboBoxBFee.getSelectedItem()).getValue();
+		int bFee_id = 0;
+		if (comboBoxBFee.getItemCount() > 0)
+			bFee_id = ((CBBItem) comboBoxBFee.getSelectedItem()).getValue();
 		return bFee_id;
 	}
 
@@ -2851,6 +2855,7 @@ public class AdminScreen extends JFrame {
 			column = "teacher_id";
 			break;
 		case "Mã lớp học":
+		case "Mã lớp":
 			column = "boardingClass_id";
 			break;
 		case "Phòng":

@@ -242,7 +242,7 @@ public class AdminController implements ActionListener {
 		String condition = getCondition();
 		if (column.equals("SHS")) {
 			if (condition.length() != 0)
-				condition = object + "." + condition;
+				condition = "B" + "." + condition;
 			ids = GlobalDAO.getInstance().getSortNumberOfStudents(condition, amount, desc);
 		} else if (column.equals("STDCM")) {
 			if (condition.length() != 0)
@@ -288,70 +288,74 @@ public class AdminController implements ActionListener {
 	}
 
 	public void doAddMoreInvoice() {
-		int bFee_id = ((CBBItem) this.adminScreen.comboBoxBFee.getSelectedItem()).getValue();
-		String condition = this.adminScreen.getTextSearchOf(object);
-		if (condition.length() != 0) {
-			String clSearch = this.adminScreen.getColumnSearch(object);
-			if (clSearch.equals("THS")) {
-				List<String> cl_ids = GlobalDAO.getInstance().search("student", "student_id",
-						" name LIKE \'%" + condition + "%\'", 0);
-				if (cl_ids.size() > 0) {
-					clSearch = "student_id";
-					condition = " " + clSearch + " IN (";
-					for (String id : cl_ids) {
-						condition += "\'" + id + "\',";
+		if (adminScreen.comboBoxBFee.getItemCount() > 0) {
+			int bFee_id = ((CBBItem) this.adminScreen.comboBoxBFee.getSelectedItem()).getValue();
+			String condition = this.adminScreen.getTextSearchOf(object);
+			if (condition.length() != 0) {
+				String clSearch = this.adminScreen.getColumnSearch(object);
+				if (clSearch.equals("THS")) {
+					List<String> cl_ids = GlobalDAO.getInstance().search("student", "student_id",
+							" name LIKE \'%" + condition + "%\'", 0);
+					if (cl_ids.size() > 0) {
+						clSearch = "student_id";
+						condition = " " + clSearch + " IN (";
+						for (String id : cl_ids) {
+							condition += "\'" + id + "\',";
+						}
+						condition = condition.substring(0, condition.length() - 1) + ")";
 					}
-					condition = condition.substring(0, condition.length() - 1) + ")";
-				}
-			} else if (clSearch.equals("LBT")) {
-				List<String> cl_ids = GlobalDAO.getInstance().search("boardingClass", "boardingClass_id",
-						" name = \'" + condition + "\'", 1);
-				if (cl_ids.size() > 0) {
-					clSearch = "boardingClass_id";
-					condition = " " + clSearch + " LIKE \'%" + cl_ids.get(0) + "%\'";
-				}
-			} else if (clSearch.equals("statusPayment")) {
-				condition = condition.toLowerCase();
-				if (condition.equals("chưa nộp")) {
-					condition = clSearch + "=1 ";
-				} else if (condition.equals("chưa in")) {
-					condition = clSearch + "=2 ";
-				} else if (condition.equals("đã in")) {
-					condition = clSearch + "=3";
-				} else {
-					JOptionPane.showMessageDialog(adminScreen,
-							"Vui lòng nhập đúng tên trạng thái!\n 1. Chưa nộp.\n 2. Chưa in.\n 3. Đã in");
-					return;
-				}
-			} else
-				condition = " " + clSearch + " LIKE \'%" + condition + "%\'";
+				} else if (clSearch.equals("LBT")) {
+					List<String> cl_ids = GlobalDAO.getInstance().search("boardingClass", "boardingClass_id",
+							" name = \'" + condition + "\'", 1);
+					if (cl_ids.size() > 0) {
+						clSearch = "boardingClass_id";
+						condition = " " + clSearch + " LIKE \'%" + cl_ids.get(0) + "%\'";
+					}
+				} else if (clSearch.equals("statusPayment")) {
+					condition = condition.toLowerCase();
+					if (condition.equals("chưa nộp")) {
+						condition = clSearch + "=1 ";
+					} else if (condition.equals("chưa in")) {
+						condition = clSearch + "=2 ";
+					} else if (condition.equals("đã in")) {
+						condition = clSearch + "=3";
+					} else {
+						JOptionPane.showMessageDialog(adminScreen,
+								"Vui lòng nhập đúng tên trạng thái!\n 1. Chưa nộp.\n 2. Chưa in.\n 3. Đã in");
+						return;
+					}
+				} else
+					condition = " " + clSearch + " LIKE \'%" + condition + "%\'";
+			}
+			if (condition.length() == 0)
+				condition += " boardingFee_id = \'" + bFee_id + "\'";
+			else
+				condition += " AND boardingFee_id = \'" + bFee_id + "\'";
+			List<String> ids = GlobalDAO.getInstance().search("invoice", "invoice_id", condition, amount);
+			List<Integer> result = new ArrayList<Integer>();
+			for (String id : ids) {
+				result.add(Integer.parseInt(id));
+			}
+			this.adminScreen.addRowsInvoice(result, true);
 		}
-		if (condition.length() == 0)
-			condition += " boardingFee_id = \'" + bFee_id + "\'";
-		else
-			condition += " AND boardingFee_id = \'" + bFee_id + "\'";
-		List<String> ids = GlobalDAO.getInstance().search("invoice", "invoice_id", condition, amount);
-		List<Integer> result = new ArrayList<Integer>();
-		for (String id : ids) {
-			result.add(Integer.parseInt(id));
-		}
-		this.adminScreen.addRowsInvoice(result, true);
 	}
 
 	public void doAddMoreEHis() {
-		int bFee_id = ((CBBItem) this.adminScreen.comboBoxEHis.getSelectedItem()).getValue();
-		String condition = this.adminScreen.getTextSearchOf(object);
+		if (adminScreen.comboBoxEHis.getItemCount() > 0) {
+			int bFee_id = ((CBBItem) this.adminScreen.comboBoxEHis.getSelectedItem()).getValue();
+			String condition = this.adminScreen.getTextSearchOf(object);
 
-		String extraCondition = " boardingFee_id = \'" + bFee_id + "\'";
-		if (condition.length() == 0) {
-			condition = extraCondition;
-		} else {
-			String clSearch = this.adminScreen.getColumnSearch(object);
-			condition = " " + clSearch + " LIKE \'%" + condition + "%\'";
-			condition += " AND" + extraCondition;
+			String extraCondition = " boardingFee_id = \'" + bFee_id + "\'";
+			if (condition.length() == 0) {
+				condition = extraCondition;
+			} else {
+				String clSearch = this.adminScreen.getColumnSearch(object);
+				condition = " " + clSearch + " LIKE \'%" + condition + "%\'";
+				condition += " AND" + extraCondition;
+			}
+			List<String> ids = GlobalDAO.getInstance().search(object, object + "_id", condition, amount);
+			this.adminScreen.addRowsEatingHistory(ids, true);
 		}
-		List<String> ids = GlobalDAO.getInstance().search(object, object + "_id", condition, amount);
-		this.adminScreen.addRowsEatingHistory(ids, true);
 	}
 
 	public int checkCritical() {
@@ -532,7 +536,8 @@ public class AdminController implements ActionListener {
 			bfd = new BoardingFeeDetail(adminScreen);
 		} else if (src.equals("Chi tiết")) {
 			int bFee_id = this.adminScreen.getBoardingFeeid();
-			new BoardingFeeDetail(bFee_id, false);
+			if (bFee_id != 0)
+				new BoardingFeeDetail(bFee_id, false);
 		} else if (src.equals("In hóa đơn")) {
 			String message = "";
 			int invoices = adminScreen.getTfPrinted();
@@ -676,8 +681,12 @@ public class AdminController implements ActionListener {
 				}
 			}
 		} else if (src.equals("Danh sách theo lớp")) {
-			int bFee_id = ((CBBItem) this.adminScreen.comboBoxBFee.getSelectedItem()).getValue();
-			new ListInvoiceByBClass(bFee_id);
+			if (this.adminScreen.comboBoxBFee.getItemCount() > 0) {
+				int bFee_id = ((CBBItem) this.adminScreen.comboBoxBFee.getSelectedItem()).getValue();
+				new ListInvoiceByBClass(bFee_id);
+			} else {
+				JOptionPane.showMessageDialog(adminScreen, "Hiện không có đợt thu tiền nào!");
+			}
 		} else if (src.equals("Thay đổi mật khẩu mặc định")) {
 			new ChangeDefaultPassword();
 		}

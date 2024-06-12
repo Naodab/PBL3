@@ -58,7 +58,6 @@ public class GlobalDAO {
 			if (amount > 0)
 				sql += " LIMIT " + amount;
 			PreparedStatement pps = conn.prepareStatement(sql);
-			System.out.println(pps.toString());
 			ResultSet rs = pps.executeQuery();
 			while (rs.next()) {
 				result.add(rs.getString(1));
@@ -107,7 +106,7 @@ public class GlobalDAO {
 		JDBCUtil.closeConnection(conn);
 		return result;
 	}
-	
+
 	public int getFirstIDOf(String table) {
 		int result = 0;
 		Connection conn = JDBCUtil.getConnection();
@@ -221,7 +220,7 @@ public class GlobalDAO {
 		}
 		return result;
 	}
-	
+
 	public List<String> searchSubFoodInMenu(String condition) {
 		List<String> result = new ArrayList<String>();
 		List<Menu> allMenu = MenuDAO.getInstance().selectAll();

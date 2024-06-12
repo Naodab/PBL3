@@ -43,23 +43,25 @@ public class DetailClassCTL implements ActionListener {
 	}
 
 	public String getNameParents(int parents_id) {
-		List<String> names = GlobalDAO.getInstance().search("parents", "name", "parents_id = \'" + parents_id + "\'", 1);
+		List<String> names = GlobalDAO.getInstance().search("parents", "name", "parents_id = \'" + parents_id + "\'",
+				1);
 		String result = "Không có";
 		if (names.size() != 0) {
 			result = names.get(0);
 		}
 		return result;
 	}
-	
+
 	public String getNameTeacher(int teacher_id) {
-		List<String> names = GlobalDAO.getInstance().search("teacher", "name", "teacher_id = \'" + teacher_id + "\'", 1);
+		List<String> names = GlobalDAO.getInstance().search("teacher", "name", "teacher_id = \'" + teacher_id + "\'",
+				1);
 		String result = "Không có";
 		if (names.size() != 0) {
 			result = names.get(0);
 		}
 		return result;
 	}
-	
+
 	public int getLastIdBoardingClass() {
 		return GlobalDAO.getInstance().getLastIDOf("boardingClass");
 	}
@@ -70,16 +72,25 @@ public class DetailClassCTL implements ActionListener {
 		if (src.equals("Đóng")) {
 			dbc.dispose();
 		} else if (src.equals("Lưu")) {
+			boolean check = false;
 			if (this.dbc.checkBeforeSave()) {
 				BoardingClass bc = this.dbc.getBoardingClass();
 				if (this.dbc.getIsNew()) {
-					BoardingClassDAO.getInstance().insert(bc);
+					check = BoardingClassDAO.getInstance().insert(bc);
 					JOptionPane.showMessageDialog(this.dbc, "Tạo thành công!");
 				} else {
-					BoardingClassDAO.getInstance().update(bc);
-					JOptionPane.showMessageDialog(this.dbc, "Cập nhật thành công!");
+					if (bc.getNumberOfBed() < bc.getStudent_ids().size()) {
+						int returnal = JOptionPane.showConfirmDialog(dbc,
+								"Số học sinh hiện đang nhiều hơn số chỗ ngủ!\n Bạn có muốn lưu không?");
+						if (returnal == JOptionPane.YES_OPTION) {
+							check = BoardingClassDAO.getInstance().update(bc);
+						}
+					}
 				}
-				this.dbc.dispose();
+				if (check) {
+					JOptionPane.showMessageDialog(dbc, "Lưu thành công!");
+					this.dbc.dispose();
+				}
 			}
 		} else if (e.getSource() == this.dbc.comboBox) {
 			String selection = this.dbc.comboBox.getSelectedItem() + "";
